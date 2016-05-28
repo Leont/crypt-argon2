@@ -65,7 +65,6 @@ argon2i_raw(t_cost, m_cost, parallelism, password, salt)
 		SvREFCNT_dec(RETVAL);
 		Perl_croak(aTHX_ "Couldn't compute argon2i hash: %s", argon2_error_message(rc));
 	}
-	SvCUR(output) = 32;
 	RETVAL = newSVpvn(output, 32);
 	OUTPUT:
 	RETVAL
