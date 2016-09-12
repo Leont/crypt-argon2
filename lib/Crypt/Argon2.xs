@@ -7,7 +7,7 @@
 MODULE = Crypt::Argon2	PACKAGE = Crypt::Argon2
 
 SV*
-argon2i_pass(t_cost, m_cost, parallelism, password, salt, output_length)
+argon2i_pass(password, salt, t_cost, m_cost, parallelism, output_length)
 	int t_cost
 	int m_cost
 	int parallelism
@@ -41,7 +41,7 @@ argon2i_pass(t_cost, m_cost, parallelism, password, salt, output_length)
 	RETVAL
 
 SV*
-argon2i_raw(t_cost, m_cost, parallelism, password, salt, output_length)
+argon2i_raw(password, salt, t_cost, m_cost, parallelism, output_length)
 	int t_cost
 	int m_cost
 	int parallelism
@@ -72,3 +72,17 @@ argon2i_raw(t_cost, m_cost, parallelism, password, salt, output_length)
 	OUTPUT:
 	RETVAL
 
+int
+argon2i_verify(encoded, password)
+	SV* encoded;
+	SV* password;
+	PREINIT:
+	char* password_raw;
+	STRLEN password_len;
+	int status;
+	CODE:
+	password_raw = SvPV(password, password_len);
+	status = argon2i_verify(SvPV_nolen(encoded), password_raw, password_len);
+	RETVAL = status == ARGON2_OK;
+	OUTPUT:
+	RETVAL
