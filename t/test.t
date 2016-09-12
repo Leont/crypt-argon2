@@ -8,7 +8,7 @@ use Crypt::Argon2 qw/argon2i_pass/;
 
 sub hashtest {
 	my ($t_cost, $m_cost, $parallelism, $password, $salt, $hexref, $mcfref) = @_;
-	my $result = argon2i_pass($t_cost, 1 << $m_cost, $parallelism, $password, $salt);
+	my $result = argon2i_pass($t_cost, 1 << $m_cost, $parallelism, $password, $salt, 32);
 	#is(unpack("H*", $result), $hexref);
 	is($result, $mcfref);
 }
