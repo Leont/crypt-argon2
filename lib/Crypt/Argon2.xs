@@ -7,9 +7,9 @@
 MODULE = Crypt::Argon2	PACKAGE = Crypt::Argon2
 
 SV*
-argon2i_pass(password, salt, t_cost, m_cost, parallelism, output_length)
+argon2i_pass(password, salt, t_cost, m_factor, parallelism, output_length)
 	int t_cost
-	int m_cost
+	int m_factor
 	int parallelism
 	SV* password
 	SV* salt
@@ -19,7 +19,9 @@ argon2i_pass(password, salt, t_cost, m_cost, parallelism, output_length)
 	STRLEN password_len, salt_len;
 	int rc;
 	int encoded_length;
+	int m_cost;
 	CODE:
+	m_cost = 1 << m_factor;
 	encoded_length = 65 + ceil(output_length / 3.0) * 4;
 	password_raw = SvPV(password, password_len);
 	salt_raw = SvPV(salt, salt_len);
@@ -41,9 +43,9 @@ argon2i_pass(password, salt, t_cost, m_cost, parallelism, output_length)
 	RETVAL
 
 SV*
-argon2i_raw(password, salt, t_cost, m_cost, parallelism, output_length)
+argon2i_raw(password, salt, t_cost, m_factor, parallelism, output_length)
 	int t_cost
-	int m_cost
+	int m_factor
 	int parallelism
 	SV* password
 	SV* salt
@@ -52,7 +54,9 @@ argon2i_raw(password, salt, t_cost, m_cost, parallelism, output_length)
 	char *password_raw, *salt_raw;
 	STRLEN password_len, salt_len;
 	int rc;
+	int m_cost;
 	CODE:
+	m_cost = 1 << m_factor;
 	password_raw = SvPV(password, password_len);
 	salt_raw = SvPV(salt, salt_len);
 	RETVAL = newSVpv("", 0);
