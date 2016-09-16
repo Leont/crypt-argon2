@@ -4,14 +4,14 @@ use strict;
 use warnings;
 
 use Test::More 0.89;
-use Crypt::Argon2 qw/argon2i_pass argon2i_hex argon2i_verify/;
+use Crypt::Argon2 qw/argon2i_pass argon2i_raw argon2i_verify/;
 
 sub hashtest {
 	my ($t_cost, $m_cost, $parallelism, $password, $salt, $hexref, $mcfref) = @_;
 	my $encoded = argon2i_pass($password, $salt, $t_cost, $m_cost, $parallelism, 32);
 	is($encoded, $mcfref, "$t_cost:$m_cost:$parallelism($password, $salt) encodes as expected");
 	ok(argon2i_verify($encoded, $password), "$t_cost:$m_cost:$parallelism($password, $salt) matches as expected");
-	my $hex = argon2i_hex($password, $salt, $t_cost, $m_cost, $parallelism, 32);
+	my $hex = unpack "H*", argon2i_raw($password, $salt, $t_cost, $m_cost, $parallelism, 32);
 	is($hex, $hexref, "$t_cost:$m_cost:$parallelism($password, $salt) verifies as expected");
 }
 
