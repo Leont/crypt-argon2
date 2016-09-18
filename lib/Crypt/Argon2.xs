@@ -22,9 +22,9 @@ argon2i_pass(password, salt, t_cost, m_factor, parallelism, output_length)
 	int m_cost;
 	CODE:
 	m_cost = 1 << m_factor;
-	encoded_length = 65 + ceil(output_length / 3.0) * 4;
 	password_raw = SvPV(password, password_len);
 	salt_raw = SvPV(salt, salt_len);
+	encoded_length = argon2_encodedlen(t_cost, m_cost, parallelism, salt_len, output_length);
 	RETVAL = newSVpv("", 0);
 	SvGROW(RETVAL, encoded_length);
 	rc = argon2_hash(t_cost, m_cost, parallelism,
