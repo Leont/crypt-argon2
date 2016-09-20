@@ -97,7 +97,7 @@ argon2i_raw(password, salt, t_cost, m_factor, parallelism, output_length)
 		SvREFCNT_dec(RETVAL);
 		Perl_croak(aTHX_ "Couldn't compute argon2i hash: %s", argon2_error_message(rc));
 	}
-	SvCUR(RETVAL) = 32;
+	SvCUR(RETVAL) = output_length;
 	OUTPUT:
 	RETVAL
 
@@ -147,7 +147,7 @@ argon2d_raw(password, salt, t_cost, m_factor, parallelism, output_length)
 		SvREFCNT_dec(RETVAL);
 		Perl_croak(aTHX_ "Couldn't compute argon2d hash: %s", argon2_error_message(rc));
 	}
-	SvCUR(RETVAL) = 32;
+	SvCUR(RETVAL) = output_length;
 	OUTPUT:
 	RETVAL
 
