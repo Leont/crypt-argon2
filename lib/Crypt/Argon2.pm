@@ -111,9 +111,13 @@ You will also need a good source of randomness to generate good salts. Some poss
 
 =over 4
 
-=item * L<Bytes::Random::Secure|Bytes::Random::Secure>
+=item * L<Net::SSLeay|Net::SSLeay>
+
+Its RAND_bytes function is OpenSSL's pseudo-randomness source.
 
 =item * L<Crypt::URandom|Crypt::URandom>
+
+A minimalistic abstraction around OS-provided non-blocking (pseudo-)randomness.
 
 =back
 
@@ -123,7 +127,11 @@ Implementations of other similar algorithms include:
 
 =item * L<Crypt::ScryptKDF|Crypt::ScryptKDF>
 
+An implementation of scrypt, a older scheme that also tries to be memory hard.
+
 =item * L<Crypt::Eksblowfish::Bcrypt|Crypt::Eksblowfish::Bcrypt>
+
+An implementation of bcrypt, a battle-tested algortihm that tries to be CPU but not particularly memory intensive.
 
 =back
 
