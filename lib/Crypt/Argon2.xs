@@ -53,7 +53,7 @@ argon2i_pass(password, salt, t_cost, m_factor, parallelism, output_length)
 	RETVAL = newSVpv("", 0);
 	SvGROW(RETVAL, encoded_length);
 	rc = argon2_hash(t_cost, m_cost, parallelism,
-		(char*)password_raw, password_len,
+		password_raw, password_len,
 		salt_raw, salt_len,
 		NULL, output_length,
 		SvPVX(RETVAL), encoded_length,
@@ -87,7 +87,7 @@ argon2i_raw(password, salt, t_cost, m_factor, parallelism, output_length)
 	RETVAL = newSVpv("", 0);
 	SvGROW(RETVAL, output_length);
 	rc = argon2_hash(t_cost, m_cost, parallelism,
-		(char*)password_raw, password_len,
+		password_raw, password_len,
 		salt_raw, salt_len,
 		SvPV_nolen(RETVAL), output_length,
 		NULL, 0,
@@ -137,7 +137,7 @@ argon2d_raw(password, salt, t_cost, m_factor, parallelism, output_length)
 	RETVAL = newSVpv("", 0);
 	SvGROW(RETVAL, output_length);
 	rc = argon2_hash(t_cost, m_cost, parallelism,
-		(char*)password_raw, password_len,
+		password_raw, password_len,
 		salt_raw, salt_len,
 		SvPV_nolen(RETVAL), output_length,
 		NULL, 0,
