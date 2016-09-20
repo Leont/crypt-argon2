@@ -19,7 +19,7 @@ XSLoader::load(__PACKAGE__, __PACKAGE__->VERSION || 0);
  sub add_pass {
    my ($user, $password) = @_;
    my $salt = get_random(16);
-   my $encoded = argon2i_pass($password, $salt, 3, 12, 1, 16):
+   my $encoded = argon2i_pass($password, $salt, 3, '32M', 1, 16):
    store_password($user, $encoded);
  }
 
@@ -77,7 +77,7 @@ This is the time-cost factor, typically a small integer that can be derived as e
 
 =item * C<$m_factor>
 
-This is the memory costs factor. It is given as a logarithm of the memory size in kiB, so a value of 12 means 4MiB.
+This is the memory costs factor. This must be given as a integer followed by an order of magnitude (C<k>, C<M> or C<G> for kilobytes, megabytes or gigabytes respectively), e.g. C<'64M'>.
 
 =item * C<$parallelism>
 
