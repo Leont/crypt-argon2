@@ -50,8 +50,8 @@ argon2i_pass(password, salt, t_cost, m_factor, parallelism, output_length)
 	password_raw = SvPV(password, password_len);
 	salt_raw = SvPV(salt, salt_len);
 	encoded_length = argon2_encodedlen(t_cost, m_cost, parallelism, salt_len, output_length);
-	RETVAL = newSVpv("", 0);
-	SvGROW(RETVAL, encoded_length);
+	RETVAL = newSV(encoded_length);
+	SvPOK_only(RETVAL);
 	rc = argon2_hash(t_cost, m_cost, parallelism,
 		password_raw, password_len,
 		salt_raw, salt_len,
@@ -84,8 +84,8 @@ argon2i_raw(password, salt, t_cost, m_factor, parallelism, output_length)
 	m_cost = parse_size(m_factor);
 	password_raw = SvPV(password, password_len);
 	salt_raw = SvPV(salt, salt_len);
-	RETVAL = newSVpv("", 0);
-	SvGROW(RETVAL, output_length);
+	RETVAL = newSV(output_length);
+	SvPOK_only(RETVAL);
 	rc = argon2_hash(t_cost, m_cost, parallelism,
 		password_raw, password_len,
 		salt_raw, salt_len,
@@ -134,8 +134,8 @@ argon2d_raw(password, salt, t_cost, m_factor, parallelism, output_length)
 	m_cost = parse_size(m_factor);
 	password_raw = SvPV(password, password_len);
 	salt_raw = SvPV(salt, salt_len);
-	RETVAL = newSVpv("", 0);
-	SvGROW(RETVAL, output_length);
+	RETVAL = newSV(output_length);
+	SvPOK_only(RETVAL);
 	rc = argon2_hash(t_cost, m_cost, parallelism,
 		password_raw, password_len,
 		salt_raw, salt_len,
