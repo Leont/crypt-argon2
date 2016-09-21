@@ -10,13 +10,13 @@ static size_t S_parse_size(pTHX_ SV* value) {
 	char* end = NULL;
 	int base = strtoul(string, &end, 0);
 	if (end == string)
-		Perl_croak(aTHX_ "memory cost doesn't contain anything numeric");
+		Perl_croak(aTHX_ "Couldn't compute argon2i tag: memory cost doesn't contain anything numeric");
 	switch(*end) {
 		case '\0':
 			if (base > 1024)
 				return base / 1024;
 			else
-				Perl_croak(aTHX_ "Memory size much be at least a kilobyte");
+				Perl_croak(aTHX_ "Couldn't compute argon2i tag: Memory size much be at least a kilobyte");
 		case 'k':
 			return base;
 		case 'M':
@@ -24,7 +24,7 @@ static size_t S_parse_size(pTHX_ SV* value) {
 		case 'G':
 			return base * 1024 * 1024;
 		default:
-			Perl_croak(aTHX_ "Can't parse '%c' as an order of magnitude", *end);
+			Perl_croak(aTHX_ "Couldn't compute argon2i tag: Can't parse '%c' as an order of magnitude", *end);
 	}
 }
 #define parse_size(value) S_parse_size(aTHX_ value)
@@ -59,7 +59,7 @@ argon2i_pass(password, salt, t_cost, m_factor, parallelism, output_length)
 	);
 	if (rc != ARGON2_OK) {
 		SvREFCNT_dec(RETVAL);
-		Perl_croak(aTHX_ "Couldn't compute argon2i hash: %s", argon2_error_message(rc));
+		Perl_croak(aTHX_ "Couldn't compute argon2i tag: %s", argon2_error_message(rc));
 	}
 	SvCUR(RETVAL) = strlen(SvPV_nolen(RETVAL));
 	OUTPUT:
@@ -92,7 +92,7 @@ argon2i_raw(password, salt, t_cost, m_factor, parallelism, output_length)
 	);
 	if (rc != ARGON2_OK) {
 		SvREFCNT_dec(RETVAL);
-		Perl_croak(aTHX_ "Couldn't compute argon2i hash: %s", argon2_error_message(rc));
+		Perl_croak(aTHX_ "Couldn't compute argon2i tag: %s", argon2_error_message(rc));
 	}
 	SvCUR(RETVAL) = output_length;
 	OUTPUT:
@@ -150,7 +150,7 @@ argon2d_raw(password, salt, t_cost, m_factor, parallelism, output_length)
 	);
 	if (rc != ARGON2_OK) {
 		SvREFCNT_dec(RETVAL);
-		Perl_croak(aTHX_ "Couldn't compute argon2d hash: %s", argon2_error_message(rc));
+		Perl_croak(aTHX_ "Couldn't compute argon2d tag: %s", argon2_error_message(rc));
 	}
 	SvCUR(RETVAL) = output_length;
 	OUTPUT:
