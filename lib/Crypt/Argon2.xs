@@ -42,9 +42,7 @@ argon2i_pass(password, salt, t_cost, m_factor, parallelism, output_length)
 	PREINIT:
 	char *password_raw, *salt_raw;
 	STRLEN password_len, salt_len;
-	int rc;
-	int encoded_length;
-	int m_cost;
+	int rc, encoded_length, m_cost;
 	CODE:
 	m_cost = parse_size(m_factor);
 	password_raw = SvPV(password, password_len);
@@ -78,8 +76,7 @@ argon2i_raw(password, salt, t_cost, m_factor, parallelism, output_length)
 	PREINIT:
 	char *password_raw, *salt_raw;
 	STRLEN password_len, salt_len;
-	int rc;
-	int m_cost;
+	int rc, m_cost;
 	CODE:
 	m_cost = parse_size(m_factor);
 	password_raw = SvPV(password, password_len);
@@ -128,8 +125,7 @@ argon2d_raw(password, salt, t_cost, m_factor, parallelism, output_length)
 	PREINIT:
 	char *password_raw, *salt_raw;
 	STRLEN password_len, salt_len;
-	int rc;
-	int m_cost;
+	int rc, m_cost;
 	CODE:
 	m_cost = parse_size(m_factor);
 	password_raw = SvPV(password, password_len);
