@@ -206,13 +206,19 @@ int argon2_verify(const char *encoded, const void *pwd, const size_t pwdlen,
     int ret;
     int decode_result;
     uint32_t encoded_len;
+    size_t encoded_len_tmp;
 
     if(encoded == NULL) {
         return ARGON2_DECODING_FAIL;
     }
 
+    encoded_len_tmp = strlen(encoded);
     /* max values, to be updated in decode_string */
-    encoded_len = strlen(encoded);
+    if (UINT32_MAX < encoded_len_tmp) {
+        return ARGON2_DECODING_FAIL;
+    }
+
+    encoded_len = (uint32_t)encoded_len_tmp;
     ctx.adlen = encoded_len;
     ctx.saltlen = encoded_len;
     ctx.outlen = encoded_len;
@@ -388,5 +394,5 @@ size_t argon2_encodedlen(uint32_t t_cost, uint32_t m_cost, uint32_t parallelism,
                          uint32_t saltlen, uint32_t hashlen) {
     return strlen("$argon2x$v=$m=,t=,p=$$") + numlen(t_cost) + numlen(m_cost)
         + numlen(parallelism) + b64len(saltlen) + b64len(hashlen)
-        + numlen(ARGON2_VERSION_NUMBER);
+        + numlen(ARGON2_VERSION_NUMBER) + 1;
 }

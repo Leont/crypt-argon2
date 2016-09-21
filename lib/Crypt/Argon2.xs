@@ -48,7 +48,7 @@ argon2i_pass(password, salt, t_cost, m_factor, parallelism, output_length)
 	password_raw = SvPV(password, password_len);
 	salt_raw = SvPV(salt, salt_len);
 	encoded_length = argon2_encodedlen(t_cost, m_cost, parallelism, salt_len, output_length);
-	RETVAL = newSV(encoded_length);
+	RETVAL = newSV(encoded_length - 1);
 	SvPOK_only(RETVAL);
 	rc = argon2_hash(t_cost, m_cost, parallelism,
 		password_raw, password_len,
@@ -61,7 +61,7 @@ argon2i_pass(password, salt, t_cost, m_factor, parallelism, output_length)
 		SvREFCNT_dec(RETVAL);
 		Perl_croak(aTHX_ "Couldn't compute argon2i tag: %s", argon2_error_message(rc));
 	}
-	SvCUR(RETVAL) = strlen(SvPV_nolen(RETVAL));
+	SvCUR(RETVAL) = encoded_length - 1;
 	OUTPUT:
 	RETVAL
 
