@@ -98,7 +98,7 @@ argon2i_raw(password, salt, t_cost, m_factor, parallelism, output_length)
 	OUTPUT:
 	RETVAL
 
-int
+SV*
 argon2i_verify(encoded, password)
 	SV* encoded;
 	SV* password;
@@ -109,7 +109,16 @@ argon2i_verify(encoded, password)
 	CODE:
 	password_raw = SvPV(password, password_len);
 	status = argon2i_verify(SvPV_nolen(encoded), password_raw, password_len);
-	RETVAL = status == ARGON2_OK;
+	switch(status) {
+		case ARGON2_OK:
+			RETVAL = &PL_sv_yes;
+			break;
+		case ARGON2_VERIFY_MISMATCH:
+			RETVAL = &PL_sv_no;
+			break;
+		default:
+			Perl_croak(aTHX_ "Could not verify argon2i tag: %s", argon2_error_message(status));
+	}
 	OUTPUT:
 	RETVAL
 
