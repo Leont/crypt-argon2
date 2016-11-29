@@ -5,3 +5,8 @@
 *.tdy
 *.tar.gz
 Crypt-Argon2-*
+lib/Crypt/Argon2.c
+_build
+*.o
+Build
+blib
