@@ -19,7 +19,7 @@ XSLoader::load(__PACKAGE__, __PACKAGE__->VERSION || 0);
  sub add_pass {
    my ($user, $password) = @_;
    my $salt = get_random(16);
-   my $encoded = argon2i_pass($password, $salt, 3, '32M', 1, 16):
+   my $encoded = argon2i_pass($password, $salt, 3, '32M', 1, 16);
    store_password($user, $encoded);
  }
 
