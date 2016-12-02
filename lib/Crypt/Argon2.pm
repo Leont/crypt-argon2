@@ -57,7 +57,7 @@ The L<Argon2 paper|https://password-hashing.net/argon2-specs.pdf> recommends the
 
 =back
 
-=func argon2i_pass($password, $salt, $t_cost, $m_factor, $parallelism, $tag_size)
+=item argon2i_pass($password, $salt, $t_cost, $m_factor, $parallelism, $tag_size)
 
 This function processes the C<$password> with the given C<$salt> and parameters. It encodes the resulting tag and the parameters as a password string (e.g. C<$argon2i$v=19$m=65536,t=2,p=1$c29tZXNhbHQ$wWKIMhR9lyDFvRz9YTZweHKfbftvj+qf+YFY4NeBbtA>).
 
@@ -89,15 +89,15 @@ This is the size of the raw result in bytes. Typical values are 16 or 32.
 
 =back
 
-=func argon2i_verify($encoded, $password)
+=item argon2i_verify($encoded, $password)
 
 This verifies that the C<$password> matches C<$encoded>. All parameters and the tag value are extracted from C<$encoded>, so no further arguments are necessary.
 
-=func argon2i_raw($password, $salt, $t_cost, $m_factor, $parallelism, $tag_size)
+=item argon2i_raw($password, $salt, $t_cost, $m_factor, $parallelism, $tag_size)
 
 This function processes the C<$password> with the given C<$salt> and parameters much like C<argon2i_pass>, but returns the binary tag instead of a formatted string.
 
-=func argon2d_raw($password, $salt, $t_cost, $m_factor, $parallelism, $tag_size)
+=item argon2d_raw($password, $salt, $t_cost, $m_factor, $parallelism, $tag_size)
 
 This function processes the C<$password> with the given C<$salt> and parameters much like C<argon2i_pass>, but returns a binary tag for argon2d instead of a formatted string for argon2i.
 
