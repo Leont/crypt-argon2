@@ -47,7 +47,7 @@ argon2i_pass(password, salt, t_cost, m_factor, parallelism, output_length)
 	m_cost = parse_size(m_factor);
 	password_raw = SvPV(password, password_len);
 	salt_raw = SvPV(salt, salt_len);
-	encoded_length = argon2_encodedlen(t_cost, m_cost, parallelism, salt_len, output_length);
+	encoded_length = argon2_encodedlen(t_cost, m_cost, parallelism, salt_len, output_length, Argon2_i);
 	RETVAL = newSV(encoded_length - 1);
 	SvPOK_only(RETVAL);
 	rc = argon2_hash(t_cost, m_cost, parallelism,
