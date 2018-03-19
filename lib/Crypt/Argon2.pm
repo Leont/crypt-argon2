@@ -35,11 +35,11 @@ This module implements the Argon2 key derivation function, which is suitable to 
 
 =head1 RECOMMENDED SETTINGS
 
-The L<Argon2 paper|https://password-hashing.net/argon2-specs.pdf> recommends the following procedure to find settings.
+The following procedure to find settings can be followed:
 
 =over 4
 
-=item 1. Select the type C<y>. If you do not know the difference between them or you consider side-channel attacks as viable threat, choose Argon2i.
+=item 1. Select the type C<y>. If you do not know the difference between them, choose Argon2id.
 
 =item 2. Figure out the maximum number of threads C<h> that can be initiated by each call to Argon2. This is the C<parallelism> argument.
 
@@ -51,15 +51,15 @@ The L<Argon2 paper|https://password-hashing.net/argon2-specs.pdf> recommends the
 
 =item 6. Select the tag (output) size. 16 bytes is suffient for most applications, including key derivation.
 
-=item 7. Run the scheme of type C<y>, memory C<m> and C<h> lanes and threads, using different number of passes C<t>. Figure out the maximum C<t> such that the running time does not exceed C<x>. If it exceeds C<x> even for C<t = 1>, reduce C<m> accordingly.
+=item 7. Run the scheme of type C<y>, memory C<m> and C<h> lanes and threads, using different number of passes C<t>. Figure out the maximum C<t> such that the running time does not exceed C<x>. If it exceeds C<x> even for C<t = 1>, reduce C<m> accordingly. If using Argon2i, t must be at least 3.
 
 =item 8. Hash all the passwords with the just determined values C<m>, C<h>, and C<t>.
 
 =back
 
-=func argon2i_pass($password, $salt, $t_cost, $m_factor, $parallelism, $tag_size)
+=func argon2id_pass($password, $salt, $t_cost, $m_factor, $parallelism, $tag_size)
 
-This function processes the C<$password> with the given C<$salt> and parameters. It encodes the resulting tag and the parameters as a password string (e.g. C<$argon2i$v=19$m=65536,t=2,p=1$c29tZXNhbHQ$wWKIMhR9lyDFvRz9YTZweHKfbftvj+qf+YFY4NeBbtA>).
+This function processes the C<$password> with the given C<$salt> and parameters. It encodes the resulting tag and the parameters as a password string (e.g. C<$argon2id$v=19$m=65536,t=2,p=1$c29tZXNhbHQ$wWKIMhR9lyDFvRz9YTZweHKfbftvj+qf+YFY4NeBbtA>).
 
 =over 4
 
@@ -88,6 +88,18 @@ This is the number of threads that are used in computing it.
 This is the size of the raw result in bytes. Typical values are 16 or 32.
 
 =back
+
+=func argon2id_verify($encoded, $password)
+
+This verifies that the C<$password> matches C<$encoded>. All parameters and the tag value are extracted from C<$encoded>, so no further arguments are necessary.
+
+=func argon2id_raw($password, $salt, $t_cost, $m_factor, $parallelism, $tag_size)
+
+This function processes the C<$password> with the given C<$salt> and parameters much like C<argon2i_pass>, but returns the binary tag instead of a formatted string.
+
+=func argon2i_pass($password, $salt, $t_cost, $m_factor, $parallelism, $tag_size)
+
+This function processes the C<$password> with the given C<$salt> and parameters much like argon2id_pass, but uses the argon2i variant instead.
 
 =func argon2i_verify($encoded, $password)
 
