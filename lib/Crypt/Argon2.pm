@@ -17,19 +17,19 @@ XSLoader::load(__PACKAGE__, __PACKAGE__->VERSION || 0);
 
 =head1 SYNOPSIS
 
- use Crypt::Argon2 qw/argon2i_pass argon2i_verify/;
+ use Crypt::Argon2 qw/argon2id_pass argon2id_verify/;
 
  sub add_pass {
    my ($user, $password) = @_;
    my $salt = get_random(16);
-   my $encoded = argon2i_pass($password, $salt, 3, '32M', 1, 16);
+   my $encoded = argon2id_pass($password, $salt, 3, '32M', 1, 16);
    store_password($user, $encoded);
  }
 
  sub check_password {
    my ($user, $password) = @_;
    my $encoded = fetch_encoded($user);
-   return argon2i_verify($encoded, $password);
+   return argon2id_verify($encoded, $password);
  }
 
 =head1 DESCRIPTION
