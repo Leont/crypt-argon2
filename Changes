@@ -1,6 +1,7 @@
 Revision history for Crypt-Argon2
 
 {{$NEXT}}
+          - Export Argon2_id functions
 
 0.003     2018-03-19 19:31:21+01:00 Europe/Amsterdam
           - Added argon2id support

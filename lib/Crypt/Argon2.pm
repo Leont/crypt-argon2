@@ -4,7 +4,10 @@ use strict;
 use warnings;
 
 use Exporter 5.57 'import';
-our @EXPORT_OK = qw/argon2i_raw argon2i_pass argon2i_verify argon2d_raw/;
+our @EXPORT_OK = qw/
+	argon2id_raw argon2id_pass argon2id_verify
+	argon2i_raw argon2i_pass argon2i_verify
+	argon2d_raw/;
 use XSLoader;
 XSLoader::load(__PACKAGE__, __PACKAGE__->VERSION || 0);
 
