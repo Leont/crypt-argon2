@@ -9,4 +9,8 @@ my $builder = Module::Build->new(
 ##{ $plugin->get_prereqs ##}
 );
 
+if ($^O ne 'MSWin32') {
+	$builder->extra_linker_flags('-lpthread');
+}
+
 $builder->create_build_script();
