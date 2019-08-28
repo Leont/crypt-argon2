@@ -1,6 +1,7 @@
 Revision history for Crypt-Argon2
 
 {{$NEXT}}
+          - Update argon2 sources to 20190702
           - Add -pthread option when compiling
 
 0.005     2018-04-12 00:59:47+02:00 Europe/Amsterdam
