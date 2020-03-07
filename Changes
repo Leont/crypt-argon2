@@ -1,6 +1,7 @@
 Revision history for Crypt-Argon2
 
 {{$NEXT}}
+          - Make 256M test an extended test
 
 0.006     2019-08-29 00:54:56+02:00 Europe/Amsterdam
           - Update argon2 sources to 20190702
