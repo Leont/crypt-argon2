@@ -161,6 +161,10 @@ Its RAND_bytes function is OpenSSL's pseudo-randomness source.
 
 A minimalistic abstraction around OS-provided non-blocking (pseudo-)randomness.
 
+=item * C</dev/random> / C</dev/urandom>
+
+A Linux/BSD specific pseudo-file that will allow you to read random bytes.
+
 =back
 
 Implementations of other similar algorithms include:
@@ -173,7 +177,7 @@ An implementation of scrypt, a older scheme that also tries to be memory hard.
 
 =item * L<Crypt::Eksblowfish::Bcrypt|Crypt::Eksblowfish::Bcrypt>
 
-An implementation of bcrypt, a battle-tested algortihm that tries to be CPU but not particularly memory intensive.
+An implementation of bcrypt, a battle-tested algorithm that tries to be CPU but not particularly memory intensive.
 
 =back
 
