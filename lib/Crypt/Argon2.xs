@@ -6,7 +6,7 @@
 
 static size_t S_parse_size(pTHX_ SV* value) {
 	STRLEN len;
-	const char* string = SvPV(value, len);
+	const char* string = SvPVbyte(value, len);
 	char* end = NULL;
 	int base = strtoul(string, &end, 0);
 	if (end == string)
@@ -45,8 +45,8 @@ argon2i_pass(password, salt, t_cost, m_factor, parallelism, output_length)
 	int rc, encoded_length, m_cost;
 	CODE:
 	m_cost = parse_size(m_factor);
-	password_raw = SvPV(password, password_len);
-	salt_raw = SvPV(salt, salt_len);
+	password_raw = SvPVbyte(password, password_len);
+	salt_raw = SvPVbyte(salt, salt_len);
 	encoded_length = argon2_encodedlen(t_cost, m_cost, parallelism, salt_len, output_length, Argon2_i);
 	RETVAL = newSV(encoded_length - 1);
 	SvPOK_only(RETVAL);
@@ -79,14 +79,14 @@ argon2i_raw(password, salt, t_cost, m_factor, parallelism, output_length)
 	int rc, m_cost;
 	CODE:
 	m_cost = parse_size(m_factor);
-	password_raw = SvPV(password, password_len);
-	salt_raw = SvPV(salt, salt_len);
+	password_raw = SvPVbyte(password, password_len);
+	salt_raw = SvPVbyte(salt, salt_len);
 	RETVAL = newSV(output_length);
 	SvPOK_only(RETVAL);
 	rc = argon2_hash(t_cost, m_cost, parallelism,
 		password_raw, password_len,
 		salt_raw, salt_len,
-		SvPV_nolen(RETVAL), output_length,
+		SvPVX(RETVAL), output_length,
 		NULL, 0,
 		Argon2_i, ARGON2_VERSION_NUMBER
 	);
@@ -107,8 +107,8 @@ argon2i_verify(encoded, password)
 	STRLEN password_len;
 	int status;
 	CODE:
-	password_raw = SvPV(password, password_len);
-	status = argon2i_verify(SvPV_nolen(encoded), password_raw, password_len);
+	password_raw = SvPVbyte(password, password_len);
+	status = argon2i_verify(SvPVbyte_nolen(encoded), password_raw, password_len);
 	switch(status) {
 		case ARGON2_OK:
 			RETVAL = &PL_sv_yes;
@@ -136,8 +136,8 @@ argon2id_pass(password, salt, t_cost, m_factor, parallelism, output_length)
 	int rc, encoded_length, m_cost;
 	CODE:
 	m_cost = parse_size(m_factor);
-	password_raw = SvPV(password, password_len);
-	salt_raw = SvPV(salt, salt_len);
+	password_raw = SvPVbyte(password, password_len);
+	salt_raw = SvPVbyte(salt, salt_len);
 	encoded_length = argon2_encodedlen(t_cost, m_cost, parallelism, salt_len, output_length, Argon2_id);
 	RETVAL = newSV(encoded_length - 1);
 	SvPOK_only(RETVAL);
@@ -170,14 +170,14 @@ argon2id_raw(password, salt, t_cost, m_factor, parallelism, output_length)
 	int rc, m_cost;
 	CODE:
 	m_cost = parse_size(m_factor);
-	password_raw = SvPV(password, password_len);
-	salt_raw = SvPV(salt, salt_len);
+	password_raw = SvPVbyte(password, password_len);
+	salt_raw = SvPVbyte(salt, salt_len);
 	RETVAL = newSV(output_length);
 	SvPOK_only(RETVAL);
 	rc = argon2_hash(t_cost, m_cost, parallelism,
 		password_raw, password_len,
 		salt_raw, salt_len,
-		SvPV_nolen(RETVAL), output_length,
+		SvPVX(RETVAL), output_length,
 		NULL, 0,
 		Argon2_id, ARGON2_VERSION_NUMBER
 	);
@@ -198,8 +198,8 @@ argon2id_verify(encoded, password)
 	STRLEN password_len;
 	int status;
 	CODE:
-	password_raw = SvPV(password, password_len);
-	status = argon2id_verify(SvPV_nolen(encoded), password_raw, password_len);
+	password_raw = SvPVbyte(password, password_len);
+	status = argon2id_verify(SvPVbyte_nolen(encoded), password_raw, password_len);
 	switch(status) {
 		case ARGON2_OK:
 			RETVAL = &PL_sv_yes;
@@ -228,14 +228,14 @@ argon2d_raw(password, salt, t_cost, m_factor, parallelism, output_length)
 	int rc, m_cost;
 	CODE:
 	m_cost = parse_size(m_factor);
-	password_raw = SvPV(password, password_len);
-	salt_raw = SvPV(salt, salt_len);
+	password_raw = SvPVbyte(password, password_len);
+	salt_raw = SvPVbyte(salt, salt_len);
 	RETVAL = newSV(output_length);
 	SvPOK_only(RETVAL);
 	rc = argon2_hash(t_cost, m_cost, parallelism,
 		password_raw, password_len,
 		salt_raw, salt_len,
-		SvPV_nolen(RETVAL), output_length,
+		SvPVX(RETVAL), output_length,
 		NULL, 0,
 		Argon2_d, ARGON2_VERSION_NUMBER
 	);
