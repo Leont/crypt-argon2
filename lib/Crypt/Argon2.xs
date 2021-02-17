@@ -4,19 +4,19 @@
 
 #include <argon2.h>
 
-static size_t S_parse_size(pTHX_ SV* value) {
+static size_t S_parse_size(pTHX_ SV* value, char* type) {
 	STRLEN len;
 	const char* string = SvPVbyte(value, len);
 	char* end = NULL;
 	int base = strtoul(string, &end, 0);
 	if (end == string)
-		Perl_croak(aTHX_ "Couldn't compute argon2i tag: memory cost doesn't contain anything numeric");
+		Perl_croak(aTHX_ "Couldn't compute argon2%s tag: memory cost doesn't contain anything numeric", type);
 	switch(*end) {
 		case '\0':
 			if (base > 1024)
 				return base / 1024;
 			else
-				Perl_croak(aTHX_ "Couldn't compute argon2i tag: Memory size much be at least a kilobyte");
+				Perl_croak(aTHX_ "Couldn't compute argon2%s tag: Memory size much be at least a kilobyte", type);
 		case 'k':
 			return base;
 		case 'M':
@@ -24,10 +24,10 @@ static size_t S_parse_size(pTHX_ SV* value) {
 		case 'G':
 			return base * 1024 * 1024;
 		default:
-			Perl_croak(aTHX_ "Couldn't compute argon2i tag: Can't parse '%c' as an order of magnitude", *end);
+			Perl_croak(aTHX_ "Couldn't compute argon2%s tag: Can't parse '%c' as an order of magnitude", type, *end);
 	}
 }
-#define parse_size(value) S_parse_size(aTHX_ value)
+#define parse_size(value, type) S_parse_size(aTHX_ value, type)
 
 MODULE = Crypt::Argon2	PACKAGE = Crypt::Argon2
 
@@ -44,7 +44,7 @@ argon2i_pass(password, salt, t_cost, m_factor, parallelism, output_length)
 	STRLEN password_len, salt_len;
 	int rc, encoded_length, m_cost;
 	CODE:
-	m_cost = parse_size(m_factor);
+	m_cost = parse_size(m_factor, "i");
 	password_raw = SvPVbyte(password, password_len);
 	salt_raw = SvPVbyte(salt, salt_len);
 	encoded_length = argon2_encodedlen(t_cost, m_cost, parallelism, salt_len, output_length, Argon2_i);
@@ -78,7 +78,7 @@ argon2i_raw(password, salt, t_cost, m_factor, parallelism, output_length)
 	STRLEN password_len, salt_len;
 	int rc, m_cost;
 	CODE:
-	m_cost = parse_size(m_factor);
+	m_cost = parse_size(m_factor, "i");
 	password_raw = SvPVbyte(password, password_len);
 	salt_raw = SvPVbyte(salt, salt_len);
 	RETVAL = newSV(output_length);
@@ -135,7 +135,7 @@ argon2id_pass(password, salt, t_cost, m_factor, parallelism, output_length)
 	STRLEN password_len, salt_len;
 	int rc, encoded_length, m_cost;
 	CODE:
-	m_cost = parse_size(m_factor);
+	m_cost = parse_size(m_factor, "id");
 	password_raw = SvPVbyte(password, password_len);
 	salt_raw = SvPVbyte(salt, salt_len);
 	encoded_length = argon2_encodedlen(t_cost, m_cost, parallelism, salt_len, output_length, Argon2_id);
@@ -169,7 +169,7 @@ argon2id_raw(password, salt, t_cost, m_factor, parallelism, output_length)
 	STRLEN password_len, salt_len;
 	int rc, m_cost;
 	CODE:
-	m_cost = parse_size(m_factor);
+	m_cost = parse_size(m_factor, "id");
 	password_raw = SvPVbyte(password, password_len);
 	salt_raw = SvPVbyte(salt, salt_len);
 	RETVAL = newSV(output_length);
@@ -227,7 +227,7 @@ argon2d_raw(password, salt, t_cost, m_factor, parallelism, output_length)
 	STRLEN password_len, salt_len;
 	int rc, m_cost;
 	CODE:
-	m_cost = parse_size(m_factor);
+	m_cost = parse_size(m_factor, "d");
 	password_raw = SvPVbyte(password, password_len);
 	salt_raw = SvPVbyte(salt, salt_len);
 	RETVAL = newSV(output_length);
