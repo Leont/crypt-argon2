@@ -1,6 +1,7 @@
 Revision history for Crypt-Argon2
 
 {{$NEXT}}
+          - Added argon2d_pass and argon2d_verify
 
 0.008     2021-02-19 20:13:53+01:00 Europe/Amsterdam
           - Add a argon2_needs_rehash function

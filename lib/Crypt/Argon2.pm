@@ -135,6 +135,14 @@ This verifies that the C<$password> matches C<$encoded>. All parameters and the 
 
 This function processes the C<$password> with the given C<$salt> and parameters much like C<argon2i_pass>, but returns the binary tag instead of a formatted string.
 
+=func argon2d_pass($password, $salt, $t_cost, $m_factor, $parallelism, $tag_size)
+
+This function processes the C<$password> with the given C<$salt> and parameters much like argon2id_pass, but uses the argon2d variant instead.
+
+=func argon2d_verify($encoded, $password
+
+This verifies that the C<$password> matches C<$encoded>. All parameters and the tag value are extracted from C<$encoded>, so no further arguments are necessary.
+
 =func argon2d_raw($password, $salt, $t_cost, $m_factor, $parallelism, $tag_size)
 
 This function processes the C<$password> with the given C<$salt> and parameters much like C<argon2i_pass>, but returns a binary tag for argon2d instead of a formatted string for argon2i.
