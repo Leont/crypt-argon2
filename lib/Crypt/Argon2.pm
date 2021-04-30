@@ -60,29 +60,7 @@ sub argon2_needs_rehash {
 
 This module implements the Argon2 key derivation function, which is suitable to convert any password into a cryptographic key. This is most often used to for secure storage of passwords but can also be used to derive a encryption key from a password. It offers variable time and memory costs as well as output size.
 
-=head1 RECOMMENDED SETTINGS
-
-The following procedure to find settings can be followed:
-
-=over 4
-
-=item 1. Select the type C<y>. If you do not know the difference between them, choose Argon2id.
-
-=item 2. Figure out the maximum number of threads C<h> that can be initiated by each call to Argon2. This is the C<parallelism> argument.
-
-=item 3. Figure out the maximum amount of memory  C<m> that each call can a afford.
-
-=item 4. Figure out the maximum amount C<x> of time (in seconds) that each call can a afford.
-
-=item 5. Select the salt length. 16 bytes is suffient for all applications, but can be reduced to 8 bytes in the case of space constraints.
-
-=item 6. Select the tag (output) size. 16 bytes is suffient for most applications, including key derivation.
-
-=item 7. Run the scheme of type C<y>, memory C<m> and C<h> lanes and threads, using different number of passes C<t>. Figure out the maximum C<t> such that the running time does not exceed C<x>. If it exceeds C<x> even for C<t = 1>, reduce C<m> accordingly. If using Argon2i, t must be at least 3.
-
-=item 8. Hash all the passwords with the just determined values C<m>, C<h>, and C<t>.
-
-=back
+To find appropriate parameters, the bundled program C<argon2-calibrate> can be used.
 
 =func argon2id_pass($password, $salt, $t_cost, $m_factor, $parallelism, $tag_size)
 
