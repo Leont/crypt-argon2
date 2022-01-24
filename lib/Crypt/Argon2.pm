@@ -158,13 +158,13 @@ Implementations of other similar algorithms include:
 
 =over 4
 
+=item * L<Crypt::Bcrypt|Crypt::Bcrypt>
+
+An implementation of bcrypt, a battle-tested algorithm that tries to be CPU but not particularly memory intensive.
+
 =item * L<Crypt::ScryptKDF|Crypt::ScryptKDF>
 
 An implementation of scrypt, a older scheme that also tries to be memory hard.
-
-=item * L<Crypt::Eksblowfish::Bcrypt|Crypt::Eksblowfish::Bcrypt>
-
-An implementation of bcrypt, a battle-tested algorithm that tries to be CPU but not particularly memory intensive.
 
 =back
 
