@@ -63,7 +63,7 @@ argon2d_pass(password, salt, t_cost, m_factor, parallelism, output_length)
 	);
 	if (rc != ARGON2_OK) {
 		SvREFCNT_dec(RETVAL);
-		Perl_croak(aTHX_ "Couldn't compute %s tag: %s", argon2_type2string(ix, false), argon2_error_message(rc));
+		Perl_croak(aTHX_ "Couldn't compute %s tag: %s", argon2_type2string(ix, FALSE), argon2_error_message(rc));
 	}
 	SvCUR(RETVAL) = encoded_length - 1;
 	OUTPUT:
@@ -100,7 +100,7 @@ argon2d_raw(password, salt, t_cost, m_factor, parallelism, output_length)
 	);
 	if (rc != ARGON2_OK) {
 		SvREFCNT_dec(RETVAL);
-		Perl_croak(aTHX_ "Couldn't compute %s tag: %s", argon2_type2string(ix, false), argon2_error_message(rc));
+		Perl_croak(aTHX_ "Couldn't compute %s tag: %s", argon2_type2string(ix, FALSE), argon2_error_message(rc));
 	}
 	SvCUR(RETVAL) = output_length;
 	OUTPUT:
@@ -129,7 +129,7 @@ argon2d_verify(encoded, password)
 			RETVAL = &PL_sv_no;
 			break;
 		default:
-			Perl_croak(aTHX_ "Could not verify %s tag: %s", argon2_type2string(ix, false), argon2_error_message(status));
+			Perl_croak(aTHX_ "Could not verify %s tag: %s", argon2_type2string(ix, FALSE), argon2_error_message(status));
 	}
 	OUTPUT:
 	RETVAL
