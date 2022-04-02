@@ -1,7 +1,12 @@
-.build
 *.bak
-*.swp
+*.o
 *.swo
-*.tdy
+*.swp
 *.tar.gz
+*.tdy
+.build
+Build
 Crypt-Argon2-*
+_build
+blib
+lib/Crypt/Argon2.c
