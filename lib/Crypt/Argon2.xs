@@ -3,6 +3,7 @@
 #include <XSUB.h>
 
 #include <argon2.h>
+#include "encoding.h"
 
 static size_t S_parse_size(pTHX_ SV* value, int type) {
 	STRLEN len;
@@ -37,7 +38,7 @@ SV* argon2d_pass(SV* password, SV* salt, int t_cost, SV* m_factor, int paralleli
 	argon2i_pass = Argon2_i
 	argon2id_pass = Argon2_id
 	PREINIT:
-	char *password_raw, *salt_raw;
+	char *password_raw, *salt_raw, *output;
 	STRLEN password_len, salt_len;
 	int rc, encoded_length, m_cost;
 	CODE:
@@ -47,17 +48,32 @@ SV* argon2d_pass(SV* password, SV* salt, int t_cost, SV* m_factor, int paralleli
 	encoded_length = argon2_encodedlen(t_cost, m_cost, parallelism, salt_len, output_length, ix);
 	RETVAL = newSV(encoded_length - 1);
 	SvPOK_only(RETVAL);
-	rc = argon2_hash(t_cost, m_cost, parallelism,
+	Newx(output, output_length, char);
+	SAVEFREEPV(output);
+	argon2_context context = {
+		output, output_length,
 		password_raw, password_len,
 		salt_raw, salt_len,
-		NULL, output_length,
-		SvPVX(RETVAL), encoded_length,
-		ix, ARGON2_VERSION_NUMBER
-	);
+		NULL, 0,
+		NULL, 0,
+		t_cost, m_cost, parallelism, parallelism,
+		ARGON2_VERSION_NUMBER,
+		NULL, NULL,
+		ARGON2_DEFAULT_FLAGS
+	};
+
+	rc = argon2_ctx(&context, ix);
+
 	if (rc != ARGON2_OK) {
 		SvREFCNT_dec(RETVAL);
 		Perl_croak(aTHX_ "Couldn't compute %s tag: %s", argon2_type2string(ix, FALSE), argon2_error_message(rc));
 	}
+
+	if (encode_string(SvPVX(RETVAL), encoded_length, &context, ix) != ARGON2_OK) {
+		SvREFCNT_dec(RETVAL);
+		Perl_croak(aTHX_ "Couldn't encode %s hash: %s", argon2_type2string(ix, FALSE), argon2_error_message(rc));
+	}
+
 	SvCUR(RETVAL) = encoded_length - 1;
 	OUTPUT:
 	RETVAL
@@ -77,13 +93,20 @@ SV* argon2d_raw(SV* password, SV* salt, int t_cost, SV* m_factor, int parallelis
 	salt_raw = SvPVbyte(salt, salt_len);
 	RETVAL = newSV(output_length);
 	SvPOK_only(RETVAL);
-	rc = argon2_hash(t_cost, m_cost, parallelism,
+	argon2_context context = {
+		SvPVX(RETVAL), output_length,
 		password_raw, password_len,
 		salt_raw, salt_len,
-		SvPVX(RETVAL), output_length,
 		NULL, 0,
-		ix, ARGON2_VERSION_NUMBER
-	);
+		NULL, 0,
+		t_cost, m_cost, parallelism, parallelism,
+		ARGON2_VERSION_NUMBER,
+		NULL, NULL,
+		ARGON2_DEFAULT_FLAGS
+	};
+
+	rc = argon2_ctx(&context, ix);
+
 	if (rc != ARGON2_OK) {
 		SvREFCNT_dec(RETVAL);
 		Perl_croak(aTHX_ "Couldn't compute %s tag: %s", argon2_type2string(ix, FALSE), argon2_error_message(rc));
@@ -98,12 +121,40 @@ SV* argon2d_verify(SV* encoded, SV* password)
 	argon2i_verify = Argon2_i
 	argon2id_verify = Argon2_id
 	PREINIT:
-	char* password_raw;
-	STRLEN password_len;
+	char *password_raw, *encoded_raw;
+	STRLEN password_len, encoded_len;
 	int status;
 	CODE:
 	password_raw = SvPVbyte(password, password_len);
-	status = argon2_verify(SvPVbyte_nolen(encoded), password_raw, password_len, ix);
+	encoded_raw = SvPVbyte(encoded, encoded_len);
+
+    argon2_context ctx = {
+		NULL, encoded_len,
+		password_raw, password_len,
+		NULL, encoded_len,
+		NULL, 0,
+		NULL, 0,
+		0, 0, 0, 0,
+		ARGON2_VERSION_NUMBER,
+		NULL, NULL,
+		ARGON2_DEFAULT_FLAGS
+	};
+	Newx(ctx.out, encoded_len, char);
+	SAVEFREEPV(ctx.out);
+	Newx(ctx.salt, encoded_len, char);
+	SAVEFREEPV(ctx.salt);
+
+	status = decode_string(&ctx, encoded_raw, ix);
+
+	if (status == ARGON2_OK) {
+		char* desired_result = ctx.out;
+
+		Newx(ctx.out, ctx.outlen, char);
+		SAVEFREEPV(ctx.out);
+
+		status = argon2_verify_ctx(&ctx, (char *)desired_result, ix);
+	}
+
 	switch(status) {
 		case ARGON2_OK:
 			RETVAL = &PL_sv_yes;
