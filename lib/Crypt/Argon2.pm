@@ -62,7 +62,7 @@ This module implements the Argon2 key derivation function, which is suitable to 
 
 To find appropriate parameters, the bundled program C<argon2-calibrate> can be used.
 
-=func argon2id_pass($password, $salt, $t_cost, $m_factor, $parallelism, $tag_size)
+=func argon2id_pass($password, $salt, $t_cost, $m_factor, $parallelism, $tag_size, $additional)
 
 This function processes the C<$password> with the given C<$salt> and parameters. It encodes the resulting tag and the parameters as a password string (e.g. C<$argon2id$v=19$m=65536,t=2,p=1$c29tZXNhbHQ$wWKIMhR9lyDFvRz9YTZweHKfbftvj+qf+YFY4NeBbtA>).
 
@@ -91,6 +91,10 @@ This is the number of threads that are used in computing it.
 =item * C<$tag_size>
 
 This is the size of the raw result in bytes. Typical values are 16 or 32.
+
+=item * C<$additional>
+
+This is additional data that is included in the hash. This defaults to C<undef>.
 
 =back
 
