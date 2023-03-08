@@ -11,27 +11,21 @@ our @EXPORT_OK = qw/
 use XSLoader;
 XSLoader::load(__PACKAGE__, __PACKAGE__->VERSION || 0);
 
-use MIME::Base64 'decode_base64';
-
 my %multiplier = (
 	k => 1,
 	M => 1024,
 	G => 1024 * 1024,
 );
 
+my $regex = qr/ ^ \$ (argon2(?:i|d|id)) \$ v=(\d+) \$ m=(\d+), t=(\d+), p=(\d+) \$ ([^\$]+) \$ (.*) $ /x;
+
 sub argon2_needs_rehash {
 	my ($encoded, $type, $t_cost, $m_cost, $parallelism, $output_length, $salt_length) = @_;
 	$m_cost =~ s/ \A (\d+) ([kMG]) \z / $1 * $multiplier{$2} * 1024 /xmse;
 	$m_cost /= 1024;
-	my (undef, $name, $version, $argstring, $salt, $hash) = split /\$/, $encoded;
-	return 1 if $name ne $type;
-	return 1 if $version !~ /v=(\d+)/ or $1 != 19;
-	my %args;
-	while ($argstring =~ m/(\w)=(\d+)/gc) {
-		$args{$1} = $2;
-	}
-	return 1 if $args{t} != $t_cost or $args{m} != $m_cost or $args{p} != $parallelism;
-	return 1 if length decode_base64($salt) != $salt_length or length decode_base64($hash) != $output_length;
+	my ($name, $version, $m_got, $t_got, $parallel_got, $salt, $hash) = $encoded =~ $regex or return 1;
+	return 1 if $name ne $type or $version != 19 or $t_got != $t_cost or $m_got != $m_cost or $parallel_got != $parallelism;
+	return 1 if int(3 / 4 * length $salt) != $salt_length or int(3 / 4 * length $hash) != $output_length;
 	return 0;
 }
 
