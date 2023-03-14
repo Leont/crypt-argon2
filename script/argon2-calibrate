@@ -34,10 +34,10 @@ my $type = prompt('What type of hash?', 'argon2id');
 my $encoder = $encoder{$type} or die "Invalid type $type";
 
 my $threads = prompt('How many threads may it use', 1);
-die 'Invalid number' unless $threads > 0;
+die "Invalid number '$threads'" unless $threads > 0;
 
 my $mem_cost = prompt('How much memory may it use (e.g. 32M)');
-die 'Invalid memory usage' unless $mem_cost =~ / ^ \d+ [hMG] $ /x;
+die "Invalid memory usage '$mem_cost'" unless $mem_cost =~ / ^ \d+ [hMG] $ /x;
 
 my $max_time = prompt('How much time may argon2 take? (in milliseconds)');
 die 'No time given' unless $max_time > 0;
