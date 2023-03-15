@@ -7,7 +7,8 @@ use Exporter 5.57 'import';
 our @EXPORT_OK = qw/
 	argon2id_raw argon2id_pass argon2id_verify
 	argon2i_raw argon2i_pass argon2i_verify
-	argon2d_raw argon2_needs_rehash/;
+	argon2d_raw argon2_needs_rehash
+	argon2_verify/;
 use XSLoader;
 XSLoader::load(__PACKAGE__, __PACKAGE__->VERSION || 0);
 
@@ -27,6 +28,12 @@ sub argon2_needs_rehash {
 	return 1 if $name ne $type or $version != 19 or $t_got != $t_cost or $m_got != $m_cost or $parallel_got != $parallelism;
 	return 1 if int(3 / 4 * length $salt) != $salt_length or int(3 / 4 * length $hash) != $output_length;
 	return 0;
+}
+
+sub argon2_verify {
+	my ($name) = $_[0] =~ $regex or return !!0;
+	my $verify = do { no strict; \&{"$name\_verify"} };
+	goto &{$verify};
 }
 
 1;
@@ -123,6 +130,10 @@ This function processes the C<$password> with the given C<$salt> and parameters 
 =func argon2_needs_rehash($encoded, $type, $t_cost, $m_cost, $parallelism, $salt_length, $output_length)
 
 This function checks if a password-encoded string needs a rehash. It will return true if the C<$type> (valid values are C<argon2i>, C<argon2id> or C<argon2d>), C<$t_cost>, C<$m_cost>, C<$parallelism>, C<$salt_length> or C<$output_length> arguments mismatches or any of the parameters of the password-encoded hash.
+
+=func argon2_verify($encoded, $password)
+
+This will verify the hash using C<argon2id_verify>, C<argon2i_verify> or C<argon2d_verify>, depending on the identifier in C<$encoded>.
 
 =head2 ACKNOWLEDGEMENTS
 
