@@ -8,7 +8,7 @@ our @EXPORT_OK = qw/
 	argon2id_raw argon2id_pass argon2id_verify
 	argon2i_raw argon2i_pass argon2i_verify
 	argon2d_raw argon2_needs_rehash
-	argon2_verify/;
+	argon2_verify argon2_crypt/;
 use XSLoader;
 XSLoader::load(__PACKAGE__, __PACKAGE__->VERSION || 0);
 
@@ -34,6 +34,14 @@ sub argon2_verify {
 	my ($name) = $_[0] =~ $regex or return !!0;
 	my $verify = do { no strict; \&{"$name\_verify"} };
 	goto &{$verify};
+}
+
+sub argon2_crypt {
+	my ($password, $settings) = @_;
+	my ($name, $version, $m_got, $t_got, $parallel_got, $salt, $hash) = $settings =~ $regex or return undef;
+	my $length = length $hash ? int(3 / 4 * length $hash) : 16;
+	my $pass = do { no strict; \&{"$name\_pass"} };
+	return eval { $pass->($password, $salt, $t_got, $m_got, $parallel_got, $length) };
 }
 
 1;
@@ -134,6 +142,10 @@ This function checks if a password-encoded string needs a rehash. It will return
 =func argon2_verify($encoded, $password)
 
 This will verify the hash using C<argon2id_verify>, C<argon2i_verify> or C<argon2d_verify>, depending on the identifier in C<$encoded>.
+
+=func argon2_crypt($password, $settings)
+
+This function implements a C<crypt()> like interface to argon2. C<$password> is a password, but C<$settings> is a settings string (a password hash that may lack anything beyond the final C<$>).
 
 =head2 ACKNOWLEDGEMENTS
 
