@@ -1,17 +1,32 @@
 use strict;
 use warnings;
-use Module::Build;
+use Module::Build 0.3604;
+
+use File::Spec;
+use ExtUtils::CBuilder;
+my $cbuilder = ExtUtils::CBuilder->new;
+my %opt_args = (
+	source               => 'opt/opt.c',
+	object_file          => File::Spec->devnull,
+	include_dirs         => [ 'include', 'src' ],
+	extra_compiler_flags => [ '-march=native' ],
+);
+
+my $optimized = eval { $cbuilder->compile(%opt_args) };
+my ($dir, $compiler_flags, $linker_flags) = $optimized ? ('opt', ['-march=native']) : ('ref');
+
+if ($^O ne 'MSWin32' and 0) {
+	unshift @{ $compiler_flags }, '-pthread';
+	unshift @{ $linker_flags }, '-pthread';
+}
 
 my $builder = Module::Build->new(
   module_name  => 'Crypt::Argon2',
-  c_source     => [ 'src', 'ref' ],
+  c_source     => [ 'src', $dir ],
+  extra_compiler_flags => $compiler_flags,
+  extra_linker_flags => $linker_flags,
   include_dirs => 'include',
 ##{ $plugin->get_prereqs ##}
 );
-
-if ($^O ne 'MSWin32') {
-	$builder->extra_compiler_flags('-pthread');
-	$builder->extra_linker_flags('-pthread');
-}
 
 $builder->create_build_script();
