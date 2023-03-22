@@ -27,6 +27,7 @@ my $builder = Module::Build->new(
   extra_linker_flags => $linker_flags,
   include_dirs => 'include',
 ##{ $plugin->get_prereqs ##}
+  script_files => 'script/argon2-calibrate',
 );
 
 $builder->create_build_script();
