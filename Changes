@@ -1,6 +1,8 @@
 Revision history for Crypt-Argon2
 
 {{$NEXT}}
+
+0.015     2023-03-22 16:21:00+01:00 Europe/Amsterdam
           - Add optimized implementation
           - Install argon2-calibrate
 
