@@ -15,7 +15,7 @@ my %opt_args = (
 my $optimized = eval { $cbuilder->compile(%opt_args) };
 my ($dir, $compiler_flags, $linker_flags) = $optimized ? ('opt', ['-march=native']) : ('ref');
 
-if ($^O ne 'MSWin32' and 0) {
+if ($^O ne 'MSWin32') {
 	unshift @{ $compiler_flags }, '-pthread';
 	unshift @{ $linker_flags }, '-pthread';
 }
