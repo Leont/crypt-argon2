@@ -9,7 +9,7 @@ our @EXPORT_OK = qw/
 	argon2id_raw argon2id_pass argon2id_verify
 	argon2i_raw argon2i_pass argon2i_verify
 	argon2d_raw argon2_pass argon2_verify
-	argon2_needs_rehash argon2_crypt argon2_types/;
+	argon2_needs_rehash argon2_types/;
 use XSLoader;
 XSLoader::load(__PACKAGE__, __PACKAGE__->VERSION || 0);
 
@@ -29,14 +29,6 @@ sub argon2_needs_rehash {
 	return 1 if $name ne $type or $version != 19 or $t_got != $t_cost or $m_got != $m_cost or $parallel_got != $parallelism;
 	return 1 if int(3 / 4 * length $salt) != $salt_length or int(3 / 4 * length $hash) != $output_length;
 	return 0;
-}
-
-sub argon2_crypt {
-	my ($password, $settings) = @_;
-	my ($name, $version, $m_got, $t_got, $parallel_got, $salt, $hash) = $settings =~ $regex or return undef;
-	my $length = length $hash ? int(3 / 4 * length $hash) : 16;
-	my $pass = do { no strict; \&{"$name\_pass"} };
-	return eval { $pass->($password, $salt, $t_got, $m_got, $parallel_got, $length) };
 }
 
 sub argon2_types {
@@ -139,10 +131,6 @@ This function checks if a password-encoded string needs a rehash. It will return
 =func argon2_types
 
 This returns all supported argon2 subtypes. Currently that's C<'argon2id'>, C<'argon2i'> and C<'argon2d'>.
-
-=func argon2_crypt($password, $settings)
-
-This function implements a C<crypt()> like interface to argon2. C<$password> is a password, but C<$settings> is a settings string (a password hash that may lack anything beyond the final C<$>).
 
 =head2 ACKNOWLEDGEMENTS
 
