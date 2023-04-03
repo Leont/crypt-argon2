@@ -31,12 +31,6 @@ sub argon2_needs_rehash {
 	return 0;
 }
 
-sub argon2_verify {
-	my ($name) = $_[0] =~ $regex or return !!0;
-	my $verify = do { no strict; \&{"$name\_verify"} };
-	goto &{$verify};
-}
-
 sub argon2_crypt {
 	my ($password, $settings) = @_;
 	my ($name, $version, $m_got, $t_got, $parallel_got, $salt, $hash) = $settings =~ $regex or return undef;

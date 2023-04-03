@@ -31,9 +31,7 @@ static size_t S_parse_size(pTHX_ SV* value, int type) {
 }
 #define parse_size(value, type) S_parse_size(aTHX_ value, type)
 
-static enum Argon2_type S_get_argon2_type(pTHX_ SV* name_sv) {
-	STRLEN name_len;
-	const char* name = SvPV(name_sv, name_len);
+static enum Argon2_type S_find_argon2_type(pTHX_ const char* name, size_t name_len) {
 	if (name_len == 8 && strnEQ(name, "argon2id", 8))
 		return Argon2_id;
 	else if (name_len == 7 && strnEQ(name, "argon2i", 7))
@@ -41,6 +39,13 @@ static enum Argon2_type S_get_argon2_type(pTHX_ SV* name_sv) {
 	else if (name_len == 7 && strnEQ(name, "argon2d", 7))
 		return Argon2_d;
 	Perl_croak(aTHX_ "No such argon2 type %s", name);
+}
+#define find_argon2_type(name, len) S_find_argon2_type(aTHX_ name, len)
+
+static enum Argon2_type S_get_argon2_type(pTHX_ SV* name_sv) {
+	STRLEN name_len;
+	const char* name = SvPV(name_sv, name_len);
+	return find_argon2_type(name, name_len);
 }
 #define get_argon2_type(name) S_get_argon2_type(aTHX_ name)
 
@@ -123,11 +128,17 @@ SV* argon2d_verify(SV* encoded, SV* password)
 	argon2d_verify = Argon2_d
 	argon2i_verify = Argon2_i
 	argon2id_verify = Argon2_id
+	argon2_verify = 4
 	PREINIT:
-	const char* password_raw;
-	STRLEN password_len;
+	const char* password_raw, *encoded_raw;
+	STRLEN password_len, encoded_len;
 	int status;
 	CODE:
+	encoded_raw = SvPVbyte(encoded, encoded_len);
+	if (ix == 4) {
+		const char* second_dollar = memchr(encoded_raw + 1, '$', encoded_len - 1);
+		ix = find_argon2_type(encoded_raw + 1, second_dollar - encoded_raw - 1);
+	}
 	password_raw = SvPVbyte(password, password_len);
 	status = argon2_verify(SvPVbyte_nolen(encoded), password_raw, password_len, ix);
 	switch(status) {
