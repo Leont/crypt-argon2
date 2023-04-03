@@ -9,7 +9,7 @@ our @EXPORT_OK = qw/
 	argon2id_raw argon2id_pass argon2id_verify
 	argon2i_raw argon2i_pass argon2i_verify
 	argon2d_raw argon2_pass argon2_verify
-	argon2_needs_rehash argon2_crypt/;
+	argon2_needs_rehash argon2_crypt argon2_types/;
 use XSLoader;
 XSLoader::load(__PACKAGE__, __PACKAGE__->VERSION || 0);
 
@@ -43,6 +43,10 @@ sub argon2_crypt {
 	my $length = length $hash ? int(3 / 4 * length $hash) : 16;
 	my $pass = do { no strict; \&{"$name\_pass"} };
 	return eval { $pass->($password, $salt, $t_got, $m_got, $parallel_got, $length) };
+}
+
+sub argon2_types {
+	return qw/argon2id argon2i argon2d/;
 }
 
 1;
