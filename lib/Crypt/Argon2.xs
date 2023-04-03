@@ -124,7 +124,7 @@ SV* argon2d_verify(SV* encoded, SV* password)
 	argon2i_verify = Argon2_i
 	argon2id_verify = Argon2_id
 	PREINIT:
-	char* password_raw;
+	const char* password_raw;
 	STRLEN password_len;
 	int status;
 	CODE:
