@@ -31,67 +31,91 @@ static size_t S_parse_size(pTHX_ SV* value, int type) {
 }
 #define parse_size(value, type) S_parse_size(aTHX_ value, type)
 
-MODULE = Crypt::Argon2	PACKAGE = Crypt::Argon2
+static enum Argon2_type S_get_argon2_type(pTHX_ SV* name_sv) {
+	STRLEN name_len;
+	const char* name = SvPV(name_sv, name_len);
+	if (name_len == 8 && strnEQ(name, "argon2id", 8))
+		return Argon2_id;
+	else if (name_len == 7 && strnEQ(name, "argon2i", 7))
+		return Argon2_i;
+	else if (name_len == 7 && strnEQ(name, "argon2d", 7))
+		return Argon2_d;
+	Perl_croak(aTHX_ "No such argon2 type %s", name);
+}
+#define get_argon2_type(name) S_get_argon2_type(aTHX_ name)
 
-SV* argon2d_pass(SV* password, SV* salt, int t_cost, SV* m_factor, int parallelism, size_t output_length)
-	ALIAS:
-	argon2d_pass = Argon2_d
-	argon2i_pass = Argon2_i
-	argon2id_pass = Argon2_id
-	PREINIT:
-	char *password_raw, *salt_raw;
+static SV* S_argon2_pass(pTHX_ enum Argon2_type type, SV* password, SV* salt, int t_cost, SV* m_factor, int parallelism, size_t output_length) {
+	int m_cost = parse_size(m_factor, type);
 	STRLEN password_len, salt_len;
-	int rc, encoded_length, m_cost;
-	CODE:
-	m_cost = parse_size(m_factor, ix);
-	password_raw = SvPVbyte(password, password_len);
-	salt_raw = SvPVbyte(salt, salt_len);
-	encoded_length = argon2_encodedlen(t_cost, m_cost, parallelism, salt_len, output_length, ix);
-	RETVAL = newSV(encoded_length - 1);
-	SvPOK_only(RETVAL);
-	rc = argon2_hash(t_cost, m_cost, parallelism,
+	const char* password_raw = SvPVbyte(password, password_len);
+	const char* salt_raw = SvPVbyte(salt, salt_len);
+	size_t encoded_length = argon2_encodedlen(t_cost, m_cost, parallelism, salt_len, output_length, type);
+	SV* result = newSV(encoded_length - 1);
+	SvPOK_only(result);
+	int rc = argon2_hash(t_cost, m_cost, parallelism,
 		password_raw, password_len,
 		salt_raw, salt_len,
 		NULL, output_length,
-		SvPVX(RETVAL), encoded_length,
-		ix, ARGON2_VERSION_NUMBER
+		SvPVX(result), encoded_length,
+		type, ARGON2_VERSION_NUMBER
 	);
 	if (rc != ARGON2_OK) {
-		SvREFCNT_dec(RETVAL);
-		Perl_croak(aTHX_ "Couldn't compute %s tag: %s", argon2_type2string(ix, FALSE), argon2_error_message(rc));
+		SvREFCNT_dec(result);
+		Perl_croak(aTHX_ "Couldn't compute %s tag: %s", argon2_type2string(type, FALSE), argon2_error_message(rc));
 	}
-	SvCUR(RETVAL) = encoded_length - 1;
-	OUTPUT:
+	SvCUR(result) = encoded_length - 1;
+	return result;
+}
+#define argon2_pass(type, password, salt, t_cost, m_factor, parallelism, output_length) S_argon2_pass(aTHX_ type, password, salt, t_cost, m_factor, parallelism, output_length)
+
+static SV* S_argon2_raw(pTHX_ enum Argon2_type type, SV* password, SV* salt, int t_cost, SV* m_factor, int parallelism, size_t output_length) {
+	int m_cost = parse_size(m_factor, type);
+	STRLEN password_len, salt_len;
+	const char* password_raw = SvPVbyte(password, password_len);
+	const char* salt_raw = SvPVbyte(salt, salt_len);
+	SV* result = newSV(output_length);
+	SvPOK_only(result);
+	int rc = argon2_hash(t_cost, m_cost, parallelism,
+		password_raw, password_len,
+		salt_raw, salt_len,
+		SvPVX(result), output_length,
+		NULL, 0,
+		type, ARGON2_VERSION_NUMBER
+	);
+	if (rc != ARGON2_OK) {
+		SvREFCNT_dec(result);
+		Perl_croak(aTHX_ "Couldn't compute %s tag: %s", argon2_type2string(type, FALSE), argon2_error_message(rc));
+	}
+	SvCUR(result) = output_length;
+	return result;
+}
+#define argon2_raw(type, password, salt, t_cost, m_factor, parallelism, output_length) S_argon2_raw(aTHX_ type, password, salt, t_cost, m_factor, parallelism, output_length)
+
+MODULE = Crypt::Argon2	PACKAGE = Crypt::Argon2
+
+SV* argon2_pass(enum Argon2_type type, SV* password, SV* salt, int t_cost, SV* m_factor, int parallelism, size_t output_length)
+
+SV* argon2id_pass(SV* password, SV* salt, int t_cost, SV* m_factor, int parallelism, size_t output_length)
+ALIAS:
+	argon2d_pass = Argon2_d
+	argon2i_pass = Argon2_i
+	argon2id_pass = Argon2_id
+CODE:
+	RETVAL = argon2_pass(ix, password, salt, t_cost, m_factor, parallelism, output_length);
+OUTPUT:
 	RETVAL
 
-SV* argon2d_raw(SV* password, SV* salt, int t_cost, SV* m_factor, int parallelism, size_t output_length)
-	ALIAS:
+
+SV* argon2_raw(enum Argon2_type type, SV* password, SV* salt, int t_cost, SV* m_factor, int parallelism, size_t output_length)
+
+SV* argon2id_raw(SV* password, SV* salt, int t_cost, SV* m_factor, int parallelism, size_t output_length)
+ALIAS:
 	argon2d_raw = Argon2_d
 	argon2i_raw = Argon2_i
 	argon2id_raw = Argon2_id
-	PREINIT:
-	char *password_raw, *salt_raw;
-	STRLEN password_len, salt_len;
-	int rc, m_cost;
-	CODE:
-	m_cost = parse_size(m_factor, ix);
-	password_raw = SvPVbyte(password, password_len);
-	salt_raw = SvPVbyte(salt, salt_len);
-	RETVAL = newSV(output_length);
-	SvPOK_only(RETVAL);
-	rc = argon2_hash(t_cost, m_cost, parallelism,
-		password_raw, password_len,
-		salt_raw, salt_len,
-		SvPVX(RETVAL), output_length,
-		NULL, 0,
-		ix, ARGON2_VERSION_NUMBER
-	);
-	if (rc != ARGON2_OK) {
-		SvREFCNT_dec(RETVAL);
-		Perl_croak(aTHX_ "Couldn't compute %s tag: %s", argon2_type2string(ix, FALSE), argon2_error_message(rc));
-	}
-	SvCUR(RETVAL) = output_length;
-	OUTPUT:
+CODE:
+	RETVAL = argon2_raw(ix, password, salt, t_cost, m_factor, parallelism, output_length);
+OUTPUT:
 	RETVAL
 
 SV* argon2d_verify(SV* encoded, SV* password)
