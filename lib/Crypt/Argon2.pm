@@ -13,6 +13,8 @@ our @EXPORT_OK = qw/
 use XSLoader;
 XSLoader::load(__PACKAGE__, __PACKAGE__->VERSION || 0);
 
+our $type_regex = qr/argon2(?:i|d|id)/;
+
 my %multiplier = (
 	k => 1,
 	M => 1024,
