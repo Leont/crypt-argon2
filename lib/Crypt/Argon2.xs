@@ -123,7 +123,7 @@ CODE:
 OUTPUT:
 	RETVAL
 
-SV* argon2d_verify(SV* encoded, SV* password)
+bool argon2d_verify(SV* encoded, SV* password)
 	ALIAS:
 	argon2d_verify = Argon2_d
 	argon2i_verify = Argon2_i
@@ -143,10 +143,10 @@ SV* argon2d_verify(SV* encoded, SV* password)
 	status = argon2_verify(SvPVbyte_nolen(encoded), password_raw, password_len, ix);
 	switch(status) {
 		case ARGON2_OK:
-			RETVAL = &PL_sv_yes;
+			RETVAL = TRUE;
 			break;
 		case ARGON2_VERIFY_MISMATCH:
-			RETVAL = &PL_sv_no;
+			RETVAL = FALSE;
 			break;
 		default:
 			Perl_croak(aTHX_ "Could not verify %s tag: %s", argon2_type2string(ix, FALSE), argon2_error_message(status));
