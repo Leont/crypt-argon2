@@ -1,6 +1,7 @@
 Revision history for Crypt-Argon2
 
 {{$NEXT}}
+          - Switch to Apache Public License 2.0
 
 0.018     2023-05-15 19:59:20+02:00 Europe/Amsterdam
           - Fix documentation markup failures
