@@ -6,7 +6,7 @@ use File::Spec;
 use ExtUtils::CBuilder;
 
 my $arch = $ENV{CRYPT_ARGON2_ARCH} || 'native';
-my @flags = $arch eq 'NONE' : () : ( "-march=$arch" );
+my @flags = $arch eq 'NONE' ? () : ( "-march=$arch" );
 
 my $cbuilder = ExtUtils::CBuilder->new;
 my %opt_args = (
