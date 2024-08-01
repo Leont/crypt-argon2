@@ -1,6 +1,8 @@
 Revision history for Crypt-Argon2
 
 {{$NEXT}}
+
+0.023     2024-08-01 13:05:09+02:00 Europe/Brussels (TRIAL RELEASE)
           - Add runtime implementation switching
           - Switch to using Dist::Build as install tool
 
