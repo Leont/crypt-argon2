@@ -1,6 +1,8 @@
 Revision history for Crypt-Argon2
 
 {{$NEXT}}
+
+0.024     2024-08-01 23:03:04+02:00 Europe/Brussels (TRIAL RELEASE)
           - Depend on installed Dist::Build
 
 0.023     2024-08-01 13:05:09+02:00 Europe/Brussels (TRIAL RELEASE)
