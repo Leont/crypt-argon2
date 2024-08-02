@@ -2,6 +2,9 @@ Revision history for Crypt-Argon2
 
 {{$NEXT}}
 
+0.025     2024-08-02 09:36:18+02:00 Europe/Brussels
+          - Add explicit include dir for include/
+
 0.024     2024-08-01 23:03:04+02:00 Europe/Brussels (TRIAL RELEASE)
           - Depend on installed Dist::Build
 
