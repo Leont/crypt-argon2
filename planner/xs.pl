@@ -58,6 +58,7 @@ int main () {
 EOF
 
 add_xs(
+	include_dirs         => [ 'include' ],
 	extra_sources        => \@sources,
 	extra_compiler_flags => \@compiler_flags,
 	extra_linker_flags   => \@linker_flags,
