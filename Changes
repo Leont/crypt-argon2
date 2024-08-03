@@ -1,6 +1,8 @@
 Revision history for Crypt-Argon2
 
 {{$NEXT}}
+
+0.026     2024-08-04 00:47:41+02:00 Europe/Brussels
           - Add check for ifunc gcc feature
 
 0.025     2024-08-02 09:36:18+02:00 Europe/Brussels
