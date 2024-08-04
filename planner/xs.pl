@@ -58,14 +58,12 @@ EOF
 	}
 EOF
 
-	try_compile_run(source => <<'EOF', define => 'HAVE_IFUNC', run => 1) or die;
+	try_compile_run(source => <<'EOF', define => 'HAVE_IFUNC', run => 1);
 #include <stddef.h>
 
 void fill_segment_sse3(const int *instance, size_t position) {
-
 }
 void fill_segment_ref(const int *instance, size_t position) {
-
 }
 
 static void (*resolve_fill_segment(void))(const int *instance, size_t position) {
