@@ -1,6 +1,8 @@
 Revision history for Crypt-Argon2
 
 {{$NEXT}}
+
+0.027     2024-08-04 22:00:44+02:00 Europe/Brussels
           - Remove debugging code from ifunc test
 
 0.026     2024-08-04 00:47:41+02:00 Europe/Brussels
