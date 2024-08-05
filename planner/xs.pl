@@ -74,13 +74,12 @@ static void (*resolve_fill_segment(void))(const int *instance, size_t position) 
 	return fill_segment_ref;
 }
 
-void fill_segment(const int *instance, size_t position)
-     __attribute__ ((ifunc ("resolve_fill_segment")));
+void fill_segment(const int *instance, size_t position) __attribute__ ((ifunc ("resolve_fill_segment")));
 
-	int main() {
-		fill_segment(NULL, 0);
-		return 0;
-	}
+int main() {
+	fill_segment(NULL, 0);
+	return 0;
+}
 EOF
 }
 
