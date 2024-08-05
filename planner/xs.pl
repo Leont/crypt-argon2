@@ -78,6 +78,7 @@ void fill_segment(const int *instance, size_t position)
      __attribute__ ((ifunc ("resolve_fill_segment")));
 
 	int main() {
+		fill_segment(NULL, 0);
 		return 0;
 	}
 EOF

@@ -1,6 +1,7 @@
 Revision history for Crypt-Argon2
 
 {{$NEXT}}
+          - Call switched function in ifunc check
 
 0.027     2024-08-04 22:00:44+02:00 Europe/Brussels
           - Remove debugging code from ifunc test
