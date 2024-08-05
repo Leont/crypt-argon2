@@ -1,6 +1,8 @@
 Revision history for Crypt-Argon2
 
 {{$NEXT}}
+
+0.028     2024-08-05 10:57:59+02:00 Europe/Brussels
           - Call switched function in ifunc check
 
 0.027     2024-08-04 22:00:44+02:00 Europe/Brussels
