@@ -1,6 +1,7 @@
 use strict;
 use warnings;
 
+use Config;
 use File::Temp 'tempfile';
 
 my (@compiler_flags, @linker_flags);
@@ -33,7 +34,8 @@ sub try_optimized {
 
 add_source('ref', 'ref');
 
-my $has_128bit = try_optimized('128bit', '-msse3', <<'EOF');
+if ($Config{archname} =~ /^x86/) {
+	my $has_128bit = try_optimized('128bit', '-msse3', <<'EOF');
 #include <immintrin.h>
 int main () {
     __m128i input, output;
@@ -42,8 +44,8 @@ int main () {
 }
 EOF
 
-if ($has_128bit) {
-	try_optimized('256bit', '-march=haswell', <<'EOF');
+	if ($has_128bit) {
+		try_optimized('256bit', '-march=haswell', <<'EOF');
 #include <immintrin.h>
 int main () {
 	__m256i input, output;
@@ -52,7 +54,7 @@ int main () {
 }
 EOF
 
-	try_optimized('512bit', '-march=skylake-avx512', <<'EOF');
+		try_optimized('512bit', '-march=skylake-avx512', <<'EOF');
 #include <immintrin.h>
 int main () {
 	__m512i input, output;
@@ -61,7 +63,7 @@ int main () {
 }
 EOF
 
-	try_compile_run(source => <<'EOF', define => 'HAVE_IFUNC');
+		try_compile_run(source => <<'EOF', define => 'HAVE_IFUNC');
 #include <stddef.h>
 
 void fill_segment_128bit(const int *instance, size_t position) {
@@ -84,6 +86,11 @@ int main() {
 	return 0;
 }
 EOF
+	}
+
+} elsif ($Config{archname} =~ /^aarch64/) {
+	define('HAVE_128BIT');
+	add_sources('128bit', 'opt');
 }
 
 add_xs(

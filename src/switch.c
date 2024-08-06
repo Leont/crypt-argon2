@@ -15,6 +15,8 @@ void fill_segment_128bit(const argon2_instance_t *instance, argon2_position_t po
 
 void fill_segment_ref(const argon2_instance_t *instance, argon2_position_t position);
 
+#if defined(__x86_64__) || defined(__i386__)
+
 #ifdef HAVE_IFUNC
 static void (*resolve_fill_segment(void))(const argon2_instance_t *instance, argon2_position_t position) {
 	__builtin_cpu_init();
@@ -57,3 +59,17 @@ void fill_segment(const argon2_instance_t *instance, argon2_position_t position)
 	fill_segment_ref(instance, position);
 }
 #endif
+
+#elif defined(__aarch64__)
+
+void fill_segment(const argon2_instance_t *instance, argon2_position_t position) {
+	fill_segment_128bit(instance, position);
+}
+
+else
+
+void fill_segment(const argon2_instance_t *instance, argon2_position_t position) {
+	fill_segment_ref(instance, position);
+}
+
+#endif /* __x86_64__ */
