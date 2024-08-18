@@ -22,6 +22,22 @@
 #include "argon2.h"
 #include "core.h"
 
+#ifdef __ARM_NEON__
+typedef int32x4_t __m128i;
+
+static inline __m128i _mm_xor_si128(__m128i a, __m128i b) {
+    return veorq_s32(a, b);
+}
+
+static inline __m128i _mm_loadu_si128(const __m128i *p ) {
+    return vld1q_s32((int32_t*) p);
+}
+
+static inline void _mm_storeu_si128(__m128i *p, __m128i a ) {
+    vst1q_s32((int32_t*) p,a);
+}
+#endif
+
 #include "blake2/blake2.h"
 #include "blake2/blamka-round-opt.h"
 
