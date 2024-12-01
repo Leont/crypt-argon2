@@ -1,6 +1,7 @@
 Revision history for Crypt-Argon2
 
 {{$NEXT}}
+          - Simplify argon2_pass and argon2_raw
 
 0.029     2024-08-05 23:18:21+02:00 Europe/Brussels
           - Add runtime CPU checks to compile time checks
