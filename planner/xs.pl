@@ -1,8 +1,8 @@
 use strict;
 use warnings;
 
-load_module('Dist::Build::XS');
-load_module('Dist::Build::XS::Conf');
+load_extension('Dist::Build::XS');
+load_extension('Dist::Build::XS::Conf');
 
 my @sources = map { "src/$_.c" } qw{argon2 core encoding thread blake2/blake2b switch};
 
