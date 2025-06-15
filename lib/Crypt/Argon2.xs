@@ -5,6 +5,7 @@
 #include <XSUB.h>
 
 #include <argon2.h>
+const char* argon2_implementation();
 
 static size_t S_parse_size(pTHX_ SV* value, int type) {
 	STRLEN len;
@@ -149,3 +150,5 @@ bool argon2d_verify(SV* encoded, SV* password)
 	}
 	OUTPUT:
 	RETVAL
+
+const char* argon2_implementation()

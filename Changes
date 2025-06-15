@@ -1,6 +1,7 @@
 Revision history for Crypt-Argon2
 
 {{$NEXT}}
+          - Add argon2_implementation
 
 0.030     2025-05-01 15:00:07+02:00 Europe/Brussels
           - Simplify argon2_pass and argon2_raw

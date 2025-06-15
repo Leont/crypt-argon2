@@ -9,7 +9,7 @@ our @EXPORT_OK = qw/
 	argon2id_raw argon2id_pass argon2id_verify
 	argon2i_raw argon2i_pass argon2i_verify
 	argon2d_raw argon2_pass argon2_verify
-	argon2_needs_rehash argon2_types/;
+	argon2_needs_rehash argon2_types argon2_implementation/;
 use XSLoader;
 XSLoader::load(__PACKAGE__, __PACKAGE__->VERSION || 0);
 
@@ -139,6 +139,10 @@ This function checks if a password-encoded string needs a rehash. It will return
 =func argon2_types
 
 This returns all supported argon2 subtypes. Currently that's C<'argon2id'>, C<'argon2i'> and C<'argon2d'>.
+
+=func argon2_implementation
+
+This returns the implementation that is used. Possible values include C<"avx512">, C<"avx2">, C<"sse3">, and C<"reference">.
 
 =head2 ACKNOWLEDGEMENTS
 
