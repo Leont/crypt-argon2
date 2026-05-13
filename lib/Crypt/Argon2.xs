@@ -133,7 +133,9 @@ bool argon2d_verify(SV* encoded, SV* password)
 	CODE:
 	encoded_raw = SvPVbyte(encoded, encoded_len);
 	if (ix == 4) {
-		const char* second_dollar = memchr(encoded_raw + 1, '$', encoded_len - 1);
+		const char* second_dollar = encoded_len ? memchr(encoded_raw + 1, '$', encoded_len - 1) : NULL;
+		if (!second_dollar)
+			Perl_croak(aTHX_ "Could not detect argon2 type: missing '$' separator");
 		ix = find_argon2_type(encoded_raw + 1, second_dollar - encoded_raw - 1);
 	}
 	password_raw = SvPVbyte(password, password_len);

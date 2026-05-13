@@ -64,4 +64,7 @@ subtest 'needs_rehash', sub {
 
 ok argon2_implementation, 'argon2_implementation returns something';
 
+ok !defined eval { argon2_verify('', 'password') }, 'argon2_verify throws when given an empty string';
+like $@, qr/Could not detect argon2 type: missing '\$' separator/;
+
 done_testing();
