@@ -19,7 +19,7 @@ static size_t S_parse_size(pTHX_ SV* value, int type) {
 			if (base > 1024)
 				return base / 1024;
 			else
-				Perl_croak(aTHX_ "Couldn't compute %s tag: Memory size much be at least a kilobyte", argon2_type2string(type, 0));
+				Perl_croak(aTHX_ "Couldn't compute %s tag: Memory size must be at least a kilobyte", argon2_type2string(type, 0));
 		case 'k':
 			return base;
 		case 'M':
