@@ -3,6 +3,7 @@ Revision history for Crypt-Argon2
 {{$NEXT}}
           - CVE-2026-8463 fix OOB read in argon2_verify
           - Add argon2_implementation
+          - Prevent overflow of size parameter
 
 0.030     2025-05-01 15:00:07+02:00 Europe/Brussels
           - Simplify argon2_pass and argon2_raw

@@ -11,7 +11,7 @@ static size_t S_parse_size(pTHX_ SV* value, int type) {
 	STRLEN len;
 	const char* string = SvPVbyte(value, len);
 	char* end = NULL;
-	int base = strtoul(string, &end, 0);
+	unsigned long base = strtoul(string, &end, 0);
 	if (end == string)
 		Perl_croak(aTHX_ "Couldn't compute %s tag: memory cost doesn't contain anything numeric", argon2_type2string(type, 0));
 	switch(*end) {
