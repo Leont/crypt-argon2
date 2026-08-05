@@ -4,6 +4,23 @@ use warnings;
 load_extension('Dist::Build::XS');
 load_extension('Dist::Build::XS::Conf');
 
+if (eval { require PkgConfig; }) {
+	my $libargon2_pc = PkgConfig->find('libargon2');
+	# Fallback to bundled libargon2 if unavailable
+	if (!$libargon2_pc->errmsg) {
+		load_extension('Dist::Build::XS::PkgConfig');
+
+		add_xs(
+			module => 'Crypt::Argon2',
+			pkg_config => {
+				library => 'libargon2',
+			},
+		);
+
+		return;
+	}
+}
+
 my @sources = map { "src/$_.c" } qw{argon2 core encoding thread blake2/blake2b switch};
 push @sources, { source => "src/ref.c", defines => { fill_segment => 'fill_segment_ref' } };
 
