@@ -1,6 +1,7 @@
 Revision history for Crypt-Argon2
 
 {{$NEXT}}
+          - Move argon2_implementation into XS file
 
 0.032     2026-07-22 16:35:05+02:00 Europe/Brussels
           - Fix unicode bug in argon2*_pass functions

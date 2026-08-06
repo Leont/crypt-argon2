@@ -98,6 +98,25 @@ static SV* S_argon2_raw(pTHX_ Argon2_type type, SV* password, SV* salt, int t_co
 }
 #define argon2_raw(...) S_argon2_raw(aTHX_ __VA_ARGS__)
 
+const char* argon2_implementation() {
+#ifdef HAVE_AVX512
+	if (__builtin_cpu_supports("avx512f"))
+		return "avx512";
+	else
+#endif
+#ifdef HAVE_AVX2
+	if (__builtin_cpu_supports("avx2"))
+		return "avx2";
+	else
+#endif
+#ifdef HAVE_SSE3
+	if (__builtin_cpu_supports("sse3"))
+		return "sse3";
+	else
+#endif
+	return "reference";
+}
+
 #undef SvPV
 #define SvPV(sv, len) SvPVbyte(sv, len)
 #undef SvPV_nolen
